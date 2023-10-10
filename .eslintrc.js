@@ -14,6 +14,7 @@ module.exports = {
   env: {
     node: true,
     jest: true,
+    browser: true,
   },
   ignorePatterns: ['.eslintrc.js'],
   rules: {
@@ -21,5 +22,9 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-unused-vars': 'error',
+    'no-undef': 'error',
+    'no-console': 'error',
+    '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
   },
 };
