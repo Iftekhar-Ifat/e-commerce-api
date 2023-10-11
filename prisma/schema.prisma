@@ -10,8 +10,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id String @id @default(uuid())
+model Users {
+  id   String @id @default(uuid())
   name String
   role String
+}
+
+model Categories {
+  id        String     @id @default(uuid())
+  category  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  products  Products[]
+}
+
+model Brands {
+  id        String     @id @default(uuid())
+  brand     String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  products  Products[]
+}
+
+model Products {
+  id               String     @id @default(uuid())
+  name             String
+  description      String
+  image_url        String
+  categories       Categories @relation(fields: [category_id], references: [id])
+  category_id      String
+  brands           Brands     @relation(fields: [brand_id], references: [id])
+  brand_id         String
+  //Status
+  price            Int
+  discounted_price Int
+  availability     Boolean
+  quantity         Int
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
 }
