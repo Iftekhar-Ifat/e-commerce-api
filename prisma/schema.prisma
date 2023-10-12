@@ -10,17 +10,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id String @id @default(uuid())
+model User {
+  id   String @id @default(uuid())
+  name String
+  role String
+}
+
+model Users {
+  id         String @id @default(uuid())
   first_name String @db.VarChar(15)
-  last_name String @db.VarChar(15)
-  email String @unique
-  password String 
+  last_name  String @db.VarChar(15)
+  email      String @unique
+  password   String
 
-
-  created_at DateTime @default(now()) 
+  created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
   @@map("users")
- 
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  category  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+
+  @@map("categories")
+}
+
+model Brand {
+  id        String    @id @default(uuid())
+  brand     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+
+  @@map("brands")
+}
+
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Product {
+  id               String        @id @default(uuid())
+  name             String
+  description      String
+  image_url        String
+  categories       Category      @relation(fields: [category_id], references: [id])
+  category_id      String
+  brands           Brand         @relation(fields: [brand_id], references: [id])
+  brand_id         String
+  status           ProductStatus
+  price            Int
+  discounted_price Int
+  availability     Boolean
+  quantity         Int
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@map("products")
 }
