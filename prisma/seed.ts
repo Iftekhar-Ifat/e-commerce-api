@@ -1,24 +1,26 @@
 import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
+import { ProductStatus } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 const main = async () => {
   // Seed Users
   for (let i = 0; i < 10; i++) {
-    const userRole = i % 2 ? 'admin' : 'user';
     await prisma.users.create({
       data: {
         id: faker.string.uuid(),
-        name: faker.person.firstName() + faker.person.lastName(),
-        role: userRole,
+        first_name: faker.person.firstName(),
+        last_name: faker.person.lastName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
       },
     });
   }
 
   // Seed Categories
   for (let i = 0; i < 10; i++) {
-    await prisma.categories.create({
+    await prisma.category.create({
       data: {
         id: faker.string.uuid(),
         category: faker.commerce.department(),
@@ -28,7 +30,7 @@ const main = async () => {
 
   // Seed Brands
   for (let i = 0; i < 10; i++) {
-    await prisma.brands.create({
+    await prisma.brand.create({
       data: {
         id: faker.string.uuid(),
         brand: faker.company.name(),
@@ -37,14 +39,14 @@ const main = async () => {
   }
 
   // get Product uuid
-  const categoryUUID = await prisma.categories.findMany({
+  const categoryUUID = await prisma.category.findMany({
     select: {
       id: true,
     },
   });
 
   // get Brand uuid
-  const brandUUID = await prisma.brands.findMany({
+  const brandUUID = await prisma.brand.findMany({
     select: {
       id: true,
     },
@@ -52,7 +54,7 @@ const main = async () => {
 
   // Seed Products
   for (let i = 0; i < 10; i++) {
-    await prisma.products.create({
+    await prisma.product.create({
       data: {
         id: faker.string.uuid(),
         name: faker.commerce.productName(),
@@ -60,6 +62,7 @@ const main = async () => {
         image_url: faker.image.url(),
         category_id: categoryUUID[i].id,
         brand_id: brandUUID[i].id,
+        status: i % 2 ? ProductStatus.ACTIVE : ProductStatus.INACTIVE,
         price: faker.number.int({ min: 10, max: 100 }),
         discounted_price: faker.number.int({ min: 5, max: 50 }),
         availability: faker.datatype.boolean(),
